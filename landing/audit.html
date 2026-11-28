@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CERBERUS-X — Local Audit Console</title>
+  <meta name="description" content="100% air-gapped forensic audit workbench for multimodal documents, conflict-aware evidence graphs, and deterministic abstention.">
+
+  <!-- Same Editorial Font System: Clash Display (700) + Satoshi (300, 500, 700) + Instrument Serif (italic) -->
+  <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@700&f[]=satoshi@300,500,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+
+  <!-- Shared Swiss Brutalist Design System -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- GSAP + ScrollTrigger + Lenis -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" defer></script>
+  <script src="script.js" defer></script>
+  <script src="audit.js" defer></script>
+</head>
+<body class="loading">
+
+  <!-- ========================================
+       PRELOADER (Synchronized with Page 1)
+       ======================================== -->
+  <div class="preloader" id="preloader" data-status-mode="audit" aria-live="polite" role="status">
+    <div class="preloader__top">
+      <div class="preloader__status">Initializing Audit Console</div>
+      <div class="preloader__meta">127.0.0.1:11434 &middot; Offline Engine</div>
+    </div>
+
+    <div class="preloader__progress-track">
+      <div class="preloader__progress-bar" id="preloaderBar"></div>
+    </div>
+
+    <div class="preloader__counter-wrap">
+      <div class="preloader__counter" id="preloaderCounter">00</div>
+    </div>
+  </div>
+
+  <!-- ========================================
+       STICKY NAVIGATION (80px, Same-Tab Navigation)
+       ======================================== -->
+  <header class="nav" id="nav">
+    <nav class="nav__inner" aria-label="Console navigation">
+      <a href="index.html" class="nav__brand" data-page-link="true">CERBERUS-X</a>
+
+      <ul class="nav__links" id="navLinks">
+        <li><a href="index.html" class="nav__link" data-page-link="true">Overview</a></li>
+        <li><a href="index.html#problem" class="nav__link" data-page-link="true">Problem</a></li>
+        <li><a href="index.html#pipeline" class="nav__link" data-page-link="true">Pipeline</a></li>
+        <li><a href="index.html#benchmarks" class="nav__link" data-page-link="true">Benchmarks</a></li>
+        <li>
+          <a href="index.html" class="nav__cta" data-page-link="true">
+            Engine Overview
+          </a>
+        </li>
+      </ul>
+
+      <button class="nav__toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mobileMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </nav>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <a href="index.html" class="mobile-menu__link" data-page-link="true">Overview</a>
+    <a href="index.html#problem" class="mobile-menu__link" data-page-link="true">Problem</a>
+    <a href="index.html#pipeline" class="mobile-menu__link" data-page-link="true">Pipeline</a>
+    <a href="index.html#benchmarks" class="mobile-menu__link" data-page-link="true">Benchmarks</a>
+    <a href="index.html" class="nav__cta" data-page-link="true">Engine Overview</a>
+  </div>
+
+  <main>
+    <!-- ========================================
+         HERO CONSOLE HEADER (Echo Stack Match)
+         ======================================== -->
+    <section class="hero hero--console" id="hero">
+      <p class="hero__eyebrow" id="heroEyebrow">
+        Local Audit Workbench &middot; Pre-LLM Forensics &amp; Evidence Graph Verification
+      </p>
+
+      <div class="hero__echo-stack hero__echo-stack--console" id="heroEchoStack">
+        <span class="hero__echo hero__echo--4" data-depth="4" aria-hidden="true">AUDIT CONSOLE</span>
+        <span class="hero__echo hero__echo--3" data-depth="3" aria-hidden="true">AUDIT CONSOLE</span>
+        <span class="hero__echo hero__echo--2" data-depth="2" aria-hidden="true">AUDIT CONSOLE</span>
+        <span class="hero__echo hero__echo--1" data-depth="1" aria-hidden="true">AUDIT CONSOLE</span>
+        <h1 class="hero__title" id="heroTitle">AUDIT CONSOLE</h1>
+      </div>
+
+      <p class="hero__headline-sub" id="heroLead">
+        Inspect source artifacts with <span class="font-serif-accent">verified</span> provenance and zero blind guessing.
+      </p>
+
+      <p class="hero__subtitle" id="heroSubtitle">
+        Upload PDFs, tables, or scanned images, execute deterministic forensics before any prompt,
+        and audit every citation against the conflict-aware evidence graph.
+      </p>
+    </section>
+
+    <!-- ========================================
+         WORKBENCH SECTION
+         ======================================== -->
+    <section class="console-section container" id="workbench">
+      <!-- Live Corpus Context Strip -->
+      <div class="corpus-bar" id="corpusBar">
+        <div class="corpus-bar__item">
+          <span class="corpus-bar__label">Loaded Dataset</span>
+          <span class="corpus-bar__value" id="statDataset">--</span>
+        </div>
+        <div class="corpus-bar__item">
+          <span class="corpus-bar__label">Total Files</span>
+          <span class="corpus-bar__value" id="statTotal">0</span>
+        </div>
+        <div class="corpus-bar__item">
+          <span class="corpus-bar__label">Clean</span>
+          <span class="corpus-bar__value" id="statClean">0</span>
+        </div>
+        <div class="corpus-bar__item">
+          <span class="corpus-bar__label">Quarantined</span>
+          <span class="corpus-bar__value corpus-bar__value--warn" id="statQuarantined">0</span>
+        </div>
+        <div class="corpus-bar__item">
+          <span class="corpus-bar__label">Ollama Status</span>
+          <span class="corpus-bar__value" id="statOllama">Checking...</span>
+        </div>
+      </div>
+
+      <div class="console-grid">
+        <!-- LEFT WORKBENCH RAIL -->
+        <aside class="console-rail" aria-label="Corpus controls and security checks">
+          <div class="rail-block">
+            <div class="rail-block__head">
+              <span class="rail-block__num">01</span>
+              <span class="rail-block__title">Documents &amp; Upload</span>
+            </div>
+
+            <div class="segmented" role="radiogroup" aria-label="Select source folder">
+              <button type="button" class="segmented__btn is-active" data-corpus="synthetic_traps" id="btnCorpusTraps">
+                synthetic_traps (6 files)
+              </button>
+              <button type="button" class="segmented__btn" data-corpus="raw" id="btnCorpusRaw">
+                data/raw (<span id="rawFileCount">0</span> uploaded)
+              </button>
+            </div>
+
+            <label class="upload-dropzone" id="uploadZone" for="fileUploadInput">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <span class="upload-dropzone__title">Upload Additional Documents</span>
+              <span class="upload-dropzone__sub">Drop files here or click · PDF, CSV, PARQUET, PNG, JPG, TXT, MD</span>
+              <input type="file" id="fileUploadInput" multiple accept=".pdf,.csv,.parquet,.png,.jpg,.jpeg,.txt,.md" class="sr-only">
+            </label>
+
+            <div class="uploaded-files-box" id="uploadedFilesBox" aria-label="Uploaded files in data/raw">
+              <div class="uploaded-files-list" id="uploadedFilesList">
+                <div class="uploaded-files-empty">No uploaded files in data/raw/</div>
+              </div>
+              <div class="uploaded-files-footer">
+                <span class="uploaded-files-footer__label">data/raw (<span id="uploadedBoxCount">0</span>)</span>
+                <button type="button" class="add-more-btn" id="addMoreFilesBtn" title="Add more documents" aria-label="Add more documents">+</button>
+              </div>
+            </div>
+
+            <div class="rail-feedback" id="uploadFeedback" aria-live="polite"></div>
+            <div class="reindex-notice" id="reindexNotice" hidden role="status">
+              Notice: Selected folder differs from the indexed corpus. Run Step 2 to re-index.
+            </div>
+          </div>
+
+          <div class="rail-block">
+            <div class="rail-block__head">
+              <span class="rail-block__num">02</span>
+              <span class="rail-block__title">Run Offline Pipeline</span>
+            </div>
+
+            <div class="ollama-status-pill" id="ollamaBadge">CHECKING LOCAL OLLAMA</div>
+
+            <label class="check-row" for="useLlmToggle">
+              <input type="checkbox" id="useLlmToggle">
+              <span>Use Local Ollama LLM (<span id="llmModelName">qwen2.5:3b</span>)</span>
+            </label>
+
+            <button type="button" class="btn-primary btn-full" id="runPipelineBtn">
+              <span id="runPipelineText">Run Offline Pipeline</span>
+            </button>
+            <div class="rail-feedback" id="pipelineFeedback" aria-live="polite"></div>
+          </div>
+
+          <div class="rail-block">
+            <div class="rail-block__head">
+              <span class="rail-block__num">03</span>
+              <span class="rail-block__title">File Security Checks</span>
+            </div>
+            <div class="security-list" id="securityList">
+              <div class="empty-note">Loading indexed corpus checks...</div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- RIGHT INSPECTOR WORKSPACE -->
+        <div class="console-main">
+          <!-- Demo Scenarios & Query Form -->
+          <div class="query-panel">
+            <p class="section-label" style="margin-bottom:12px;">Demo Scenarios</p>
+            <div class="preset-bar" id="presetBar"></div>
+
+            <form class="query-form" id="queryForm">
+              <label for="queryInput" class="sr-only">Ask a verifiable question across your corpus</label>
+              <input
+                type="text"
+                id="queryInput"
+                class="query-input"
+                placeholder="Ask across PDFs, CSV ledgers, and scanned receipts..."
+                autocomplete="off"
+              >
+              <button type="submit" class="btn-primary query-submit" id="analyzeBtn">
+                <span id="analyzeText">Analyze</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+            </form>
+          </div>
+
+          <!-- Unified Verdict Card with Animated Confidence Meter -->
+          <div class="verdict-panel" id="verdictPanel">
+            <div class="verdict-panel__left">
+              <span class="verdict-status-badge" id="verdictBadge">--</span>
+              <p class="verdict-panel__answer" id="verdictAnswer">Select a scenario or enter a question to inspect graph-proven evidence.</p>
+              <div class="verdict-panel__cites" id="verdictCites"></div>
+              <p class="verdict-panel__qnote" id="verdictQNote"></p>
+            </div>
+
+            <div class="verdict-panel__right">
+              <div class="conf-head">
+                <span class="conf-head__label">Confidence Score</span>
+                <span class="conf-head__tag" id="confGateTag">THRESHOLD 65%</span>
+              </div>
+              <div class="conf-readout">
+                <span class="conf-readout__num" id="confPctNum">0%</span>
+              </div>
+              <div class="conf-meter">
+                <div class="conf-meter__track">
+                  <div class="conf-meter__fill" id="confMeterFill"></div>
+                  <div class="conf-meter__dot" id="confMeterDot"></div>
+                  <div class="conf-meter__tick"></div>
+                  <span class="conf-meter__tick-label">65% min. trust</span>
+                </div>
+                <div class="conf-meter__scale">
+                  <span>0%</span>
+                  <span>100%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3-Tab Inspector -->
+          <div class="inspector-tabs" role="tablist" aria-label="Evidence inspector views">
+            <button type="button" class="inspector-tab is-active" role="tab" aria-selected="true" data-tab="conflicts" id="tabBtnConflicts">
+              Conflicts &amp; Citations (<span id="countConflicts">0</span>)
+            </button>
+            <button type="button" class="inspector-tab" role="tab" aria-selected="false" data-tab="visual" id="tabBtnVisual">
+              Visual Proof (<span id="countVisual">0</span>)
+            </button>
+            <button type="button" class="inspector-tab" role="tab" aria-selected="false" data-tab="graph" id="tabBtnGraph">
+              Evidence Graph
+            </button>
+          </div>
+
+          <!-- Tab 1: Conflicts & Citations -->
+          <div class="inspector-pane is-active" id="paneConflicts" role="tabpanel">
+            <div class="ev-columns">
+              <div>
+                <p class="panel-eyebrow">Trusted Sources</p>
+                <div class="ev-stack" id="trustedSourcesList"></div>
+              </div>
+              <div>
+                <p class="panel-eyebrow">Conflicts &amp; Updates</p>
+                <div class="ev-stack" id="conflictsList"></div>
+              </div>
+            </div>
+            <div id="quarantinedSection" style="display:none;margin-top:28px;">
+              <p class="panel-eyebrow">Blocked / Tampered Files</p>
+              <div class="ev-stack" id="quarantinedList"></div>
+            </div>
+          </div>
+
+          <!-- Tab 2: Visual Proof -->
+          <div class="inspector-pane" id="paneVisual" role="tabpanel" hidden>
+            <div class="visual-proof-grid" id="visualProofGrid"></div>
+          </div>
+
+          <!-- Tab 3: Default Semantic Offline PyVis Evidence Graph -->
+          <div class="inspector-pane" id="paneGraph" role="tabpanel" hidden>
+            <div class="graph-toolbar">
+              <label class="check-row" for="showFullGraphToggle" style="margin:0;">
+                <input type="checkbox" id="showFullGraphToggle">
+                <span>Show full corpus graph</span>
+              </label>
+            </div>
+
+            <div class="graph-legend-default">
+              <div class="gl-row">
+                <span class="gl-lbl">NODES</span>
+                <div class="gl-items">
+                  <span class="gl-item">
+                    <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true"><polygon points="6,0 12,6 6,12 0,6" fill="#2563EB"/></svg>
+                    <strong>Target Entity</strong> <span class="gl-sub">(Invoice / Shipment)</span>
+                  </span>
+                  <span class="gl-item">
+                    <span class="gl-swatch gl-swatch--rect" style="background:#0D9488;"></span>
+                    <strong>Clean File</strong>
+                  </span>
+                  <span class="gl-item">
+                    <span class="gl-swatch gl-swatch--rect" style="background:#DC2626;"></span>
+                    <strong>Blocked / Tampered File</strong>
+                  </span>
+                  <span class="gl-item">
+                    <span class="gl-swatch gl-swatch--dot" style="background:#16A34A;"></span>
+                    <strong>Trusted Claim</strong>
+                  </span>
+                  <span class="gl-item">
+                    <span class="gl-swatch gl-swatch--dot" style="background:#EA580C;"></span>
+                    <strong>Untrusted Claim</strong>
+                  </span>
+                  <span class="gl-item">
+                    <span class="gl-swatch gl-swatch--dot" style="background:#9CA3AF;"></span>
+                    <strong>Superseded Claim</strong>
+                  </span>
+                </div>
+              </div>
+              <div class="gl-row">
+                <span class="gl-lbl">CONNECTIONS</span>
+                <div class="gl-items">
+                  <span class="gl-item">
+                    <svg width="20" height="8" viewBox="0 0 20 8" aria-hidden="true"><line x1="0" y1="4" x2="14" y2="4" stroke="#16A34A" stroke-width="2"/><polygon points="14,1 20,4 14,7" fill="#16A34A"/></svg>
+                    <strong>Supports</strong> <span class="gl-sub">(sources agree)</span>
+                  </span>
+                  <span class="gl-item">
+                    <svg width="20" height="8" viewBox="0 0 20 8" aria-hidden="true"><line x1="0" y1="4" x2="14" y2="4" stroke="#DC2626" stroke-width="2" stroke-dasharray="4,2"/><polygon points="14,1 20,4 14,7" fill="#DC2626"/></svg>
+                    <strong>Contradicts</strong> <span class="gl-sub">(conflict detected)</span>
+                  </span>
+                  <span class="gl-item">
+                    <svg width="20" height="8" viewBox="0 0 20 8" aria-hidden="true"><line x1="0" y1="4" x2="14" y2="4" stroke="#D97706" stroke-width="2"/><polygon points="14,1 20,4 14,7" fill="#D97706"/></svg>
+                    <strong>Supersedes</strong> <span class="gl-sub">(newer legal update)</span>
+                  </span>
+                  <span class="gl-item">
+                    <svg width="20" height="8" viewBox="0 0 20 8" aria-hidden="true"><line x1="0" y1="4" x2="14" y2="4" stroke="#D4D4D8" stroke-width="2"/><polygon points="14,1 20,4 14,7" fill="#D4D4D8"/></svg>
+                    <strong>Asserts</strong> <span class="gl-sub">(file claims fact)</span>
+                  </span>
+                  <span class="gl-item">
+                    <svg width="20" height="8" viewBox="0 0 20 8" aria-hidden="true"><line x1="0" y1="4" x2="14" y2="4" stroke="#A1A1AA" stroke-width="2" stroke-dasharray="2,2"/><polygon points="14,1 20,4 14,7" fill="#A1A1AA"/></svg>
+                    <strong>About</strong> <span class="gl-sub">(links claim to entity)</span>
+                  </span>
+                </div>
+              </div>
+              <div class="gl-hint">Drag nodes to inspect &middot; Scroll to zoom &middot; Hover any node or arrow for details.</div>
+            </div>
+
+            <div class="graph-iframe-wrap">
+              <iframe id="evidenceGraphFrame" class="graph-iframe" title="Interactive offline evidence graph"></iframe>
+            </div>
+          </div>
+
+          <!-- Full Technical Audit JSON Accordion -->
+          <details class="audit-json-drawer">
+            <summary class="audit-json-drawer__summary">
+              <span>View Full Technical Audit (JSON)</span>
+              <span class="audit-json-drawer__hint">VerdictResponse Schema</span>
+            </summary>
+            <div class="audit-json-drawer__body">
+              <div class="audit-json-drawer__bar">
+                <button type="button" class="graph-tool-btn" id="copyJsonBtn">Copy JSON Dossier</button>
+              </div>
+              <pre class="audit-json-pre" id="rawJsonPre">{}</pre>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================
+       FOOTER (#1e1e1e Match)
+       ======================================== -->
+  <footer class="footer" id="contact">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <div class="footer__brand-name">CERBERUS-X</div>
+          <p class="footer__brand-desc">
+            100% offline multimodal forensic intelligence and conflict-aware evidence graph engine.
+            Every model, embedding, and parser runs on this machine. No evidence leaves localhost.
+          </p>
+        </div>
+
+        <div>
+          <div class="footer__col-title">Navigation</div>
+          <ul class="footer__links">
+            <li><a href="index.html" class="footer__link" data-page-link="true">Engine Overview</a></li>
+            <li><a href="index.html#problem" class="footer__link" data-page-link="true">Problem</a></li>
+            <li><a href="index.html#pipeline" class="footer__link" data-page-link="true">Pipeline</a></li>
+            <li><a href="index.html#benchmarks" class="footer__link" data-page-link="true">Benchmarks</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer__col-title">Company</div>
+          <ul class="footer__links">
+            <li>
+              <a href="https://github.com/Gagan-G-044/QUBITRA" class="footer__link" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+                Repository
+              </a>
+            </li>
+            <li>
+              <a href="index.html#showcase" class="footer__link" data-page-link="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Graph Topology
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer__col-title">Runtime</div>
+          <ul class="footer__links">
+            <li>
+              <span class="footer__link">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                Console 127.0.0.1:8503
+              </span>
+            </li>
+            <li>
+              <span class="footer__link">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                Ollama 127.0.0.1:11434
+              </span>
+            </li>
+            <li>
+              <span class="footer__link">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                HF_HUB_OFFLINE=1
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <span class="footer__copy">CERBERUS-X &middot; Offline Forensic Intelligence Engine</span>
+        <div class="footer__tech-chips">
+          <span class="footer__chip">Python</span>
+          <span class="footer__chip">Pydantic v2</span>
+          <span class="footer__chip">NetworkX</span>
+          <span class="footer__chip">PyMuPDF</span>
+          <span class="footer__chip">RapidOCR</span>
+          <span class="footer__chip">DuckDB</span>
+          <span class="footer__chip">Ollama qwen2.5:3b</span>
+          <span class="footer__chip">Audit API</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Smooth Same-Tab Page Curtain Overlay -->
+  <div class="page-curtain" id="pageCurtain" aria-hidden="true"></div>
+
+  <!-- Swiss Frosted Execution Veil (Softens Screen During Pipeline & Query Runs) -->
+  <div class="exec-veil" id="execVeil" role="status" aria-live="polite" hidden>
+    <div class="exec-card">
+      <div class="exec-card__top">
+        <span class="exec-card__mode" id="execModeLabel">Executing Audit</span>
+        <span class="exec-card__timer" id="execTimer">00.0s</span>
+      </div>
+
+      <h2 class="exec-card__title" id="execStageTitle">
+        Verifying <span class="font-serif-accent">evidence</span> artifacts
+      </h2>
+      <p class="exec-card__detail" id="execStageDetail">
+        Running local pre-LLM forensics and bounded graph inference...
+      </p>
+
+      <div class="exec-sweep-track" aria-hidden="true">
+        <div class="exec-sweep-bar"></div>
+      </div>
+
+      <div class="exec-steps" id="execSteps">
+        <div class="exec-step" data-exec-step="1">
+          <span class="exec-step__num">01</span>
+          <span class="exec-step__name">Forensics</span>
+        </div>
+        <div class="exec-step" data-exec-step="2">
+          <span class="exec-step__num">02</span>
+          <span class="exec-step__name">Claims &amp; ER</span>
+        </div>
+        <div class="exec-step" data-exec-step="3">
+          <span class="exec-step__num">03</span>
+          <span class="exec-step__name">Graph &amp; Gate</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

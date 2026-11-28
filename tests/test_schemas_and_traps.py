@@ -17,7 +17,6 @@ from core.schemas import (
     ForensicSeverity,
     LocationRef,
     Modality,
-    ParsedChunk,
     SourceDoc,
     VerdictResponse,
     VerdictStatus,

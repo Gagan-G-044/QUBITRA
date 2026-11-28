@@ -1,15 +1,52 @@
+# Python environments & caches
 .venv/
 venv/
+env/
 __pycache__/
-.pytest_cache/
 *.py[cod]
 *.pyc
-.DS_Store
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+
+# Environment & local secrets
 .env
-PPT_CONTEXT.md
+.env.local
+.env.*.local
+
+# OS & editor artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
 *.log
-.agents/
+*.tmp
+*.bak
+
+# AI coding agents, instructions & scratch docs
+GEMINI.md
+CLAUDE.md
+AGENTS.md
+COPILOT.md
+PPT_CONTEXT.md
 .claude/
+.gemini/
+.agent/
+.agents/
+.cursor/
+.antigravity/
+.vscode/
+.cursorrules
+.windsurfrules
+.clinerules
+
+# Generated runtime storage & uploaded corpus files
 storage/chromadb/
+storage/*.json
 data/raw/*
 !data/raw/.gitkeep

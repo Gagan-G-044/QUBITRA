@@ -12,12 +12,12 @@ from types import SimpleNamespace
 from PIL import Image, ImageDraw
 import pymupdf
 
-import app
 from core.extractor import extract_and_persist, extract_claims, resolve_entities
 from core.graph_engine import build_and_persist_graph
 from core.ingest import ingest_directory
 from core.reasoner import answer_query
 from core.schemas import EdgeType, VerdictStatus
+from landing.server import run_full_pipeline
 
 
 def _create_unseen_shipment_corpus(corpus_dir: Path) -> None:
@@ -76,7 +76,7 @@ def test_unseen_shipment_corpus_deterministic_mode(tmp_path: Path) -> None:
     storage_dir = tmp_path / "storage"
     _create_unseen_shipment_corpus(corpus_dir)
 
-    summary = app.run_full_pipeline(input_dir=corpus_dir, storage_dir=storage_dir, use_llm=False)
+    summary = run_full_pipeline(input_dir=corpus_dir, storage_dir=storage_dir, use_llm=False)
     assert summary["doc_count"] == 3
     assert summary["claim_count"] > 0
 
@@ -187,7 +187,6 @@ def test_3b_llm_grounding_normalizes_generic_entities_and_noisy_attrs(
     monkeypatch,
 ) -> None:
     """Verify post-LLM normalizer fixes generic-noun entities, fallback attrs, and From: emails."""
-    from core.config import settings
     from core.schemas import LocationRef, Modality, ParsedChunk, SourceDoc
 
     clean_pdf = SourceDoc(

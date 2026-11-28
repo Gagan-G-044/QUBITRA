@@ -10,7 +10,7 @@ import pytest
 
 import cli
 from core.config import settings
-from core.extractor import extract_and_persist, extract_claims, resolve_entities
+from core.extractor import extract_claims, resolve_entities
 from core.schemas import Claim, LocationRef, Modality, ParsedChunk, SourceDoc
 
 

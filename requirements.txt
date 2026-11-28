@@ -15,4 +15,3 @@ ollama
 pytest
 python-dotenv
 pyvis
-streamlit

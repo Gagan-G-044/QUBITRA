@@ -498,9 +498,14 @@ def analyze_source_with_context(path: Path) -> tuple[SourceDoc, float]:
         flags, metadata = inspect_text_forensics(resolved)
 
     final_trust, quarantined = _apply_trust_penalties(base_trust, flags)
+    base_resolved = settings.base_dir.resolve()
+    try:
+        stored_path = resolved.relative_to(base_resolved).as_posix()
+    except ValueError:
+        stored_path = str(resolved)
     source_doc = SourceDoc(
         source_id=f"src_{sha256[:12]}",
-        file_path=str(resolved),
+        file_path=stored_path,
         file_name=resolved.name,
         modality=modality,
         sha256=sha256,

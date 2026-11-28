@@ -10,7 +10,7 @@ from pydantic import TypeAdapter
 import cli
 from core.config import settings
 from core.forensics import analyze_source, sanitize_text
-from core.ingest import ingest_directory, ingest_file
+from core.ingest import ingest_directory
 from core.schemas import ForensicSeverity, Modality, ParsedChunk, SourceDoc
 
 

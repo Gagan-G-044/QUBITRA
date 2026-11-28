@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CERBERUS-X — Offline Forensic Intelligence Engine</title>
+  <meta name="description" content="CERBERUS-X audits PDFs, ledgers, and scanned images offline, catching spliced pixels, hidden prompt injections, and temporal amendments with deterministic 65% abstention.">
+
+  <!-- Typography: Clash Display (700) + Satoshi (300, 500, 700) from Fontshare; Instrument Serif (italic) from Google Fonts -->
+  <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@700&f[]=satoshi@300,500,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+
+  <!-- Design System -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- GSAP + ScrollTrigger + Lenis -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body class="loading">
+
+  <!-- ========================================
+       PRELOADER (Oriol-Style Editorial Curtain)
+       ======================================== -->
+  <div class="preloader" id="preloader" aria-live="polite" role="status">
+    <div class="preloader__top">
+      <div class="preloader__status">Loading Archive</div>
+      <div class="preloader__meta">127.0.0.1:11434 &middot; Offline Engine</div>
+    </div>
+
+    <div class="preloader__progress-track">
+      <div class="preloader__progress-bar" id="preloaderBar"></div>
+    </div>
+
+    <div class="preloader__counter-wrap">
+      <div class="preloader__counter" id="preloaderCounter">00</div>
+    </div>
+  </div>
+
+  <!-- ========================================
+       STICKY NAVIGATION (80px)
+       ======================================== -->
+  <header class="nav" id="nav">
+    <nav class="nav__inner" aria-label="Main navigation">
+      <a href="#hero" class="nav__brand">CERBERUS-X</a>
+
+      <ul class="nav__links" id="navLinks">
+        <li><a href="#problem" class="nav__link">Problem</a></li>
+        <li><a href="#pipeline" class="nav__link">Pipeline</a></li>
+        <li><a href="#showcase" class="nav__link">Architecture</a></li>
+        <li><a href="#benchmarks" class="nav__link">Benchmarks</a></li>
+        <li><a href="audit.html" class="nav__cta" data-page-link="true">Run Local Audit</a></li>
+      </ul>
+
+      <button class="nav__toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mobileMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </nav>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <a href="#problem" class="mobile-menu__link">Problem</a>
+    <a href="#pipeline" class="mobile-menu__link">Pipeline</a>
+    <a href="#showcase" class="mobile-menu__link">Architecture</a>
+    <a href="#benchmarks" class="mobile-menu__link">Benchmarks</a>
+    <a href="audit.html" class="nav__cta" data-page-link="true">Run Local Audit</a>
+  </div>
+
+  <main>
+    <!-- ========================================
+         HERO (Pure Typographic Weight + Echo Stack)
+         ======================================== -->
+    <section class="hero" id="hero">
+      <p class="hero__eyebrow" id="heroEyebrow">
+        100% Air-Gapped &middot; Localhost 127.0.0.1:11434 &middot; HF_HUB_OFFLINE=1
+      </p>
+
+      <div class="hero__echo-stack" id="heroEchoStack">
+        <span class="hero__echo hero__echo--4" data-depth="4" aria-hidden="true">CERBERUS-X</span>
+        <span class="hero__echo hero__echo--3" data-depth="3" aria-hidden="true">CERBERUS-X</span>
+        <span class="hero__echo hero__echo--2" data-depth="2" aria-hidden="true">CERBERUS-X</span>
+        <span class="hero__echo hero__echo--1" data-depth="1" aria-hidden="true">CERBERUS-X</span>
+        <h1 class="hero__title" id="heroTitle">CERBERUS-X</h1>
+      </div>
+
+      <p class="hero__headline-sub" id="heroLead">
+        Forensic evidence graphs <span class="font-serif-accent">before</span> your LLM ever reads a word.
+      </p>
+
+      <p class="hero__subtitle" id="heroSubtitle">
+        CERBERUS-X audits PDFs, ledgers, and scanned images offline, catching spliced pixels,
+        hidden prompt injections, and temporal amendments with deterministic 65% abstention.
+      </p>
+
+      <div class="hero__actions" id="heroActions">
+        <a href="audit.html" class="btn-primary" data-page-link="true">
+          Run Local Audit
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- ========================================
+         PHILOSOPHY / NARRATIVE SECTION
+         ======================================== -->
+    <section class="philosophy section container" id="philosophy">
+      <div class="philosophy__divider" id="philoDivider" aria-hidden="true"></div>
+
+      <h2 class="philosophy__quote" aria-label="Every claim is proven by its graph, or the engine refuses to answer.">
+        <span class="line-reveal"><span class="line-reveal__inner">Every claim is <span class="font-serif-accent">proven</span></span></span>
+        <span class="line-reveal"><span class="line-reveal__inner">by its graph, or the engine</span></span>
+        <span class="line-reveal"><span class="line-reveal__inner">refuses to answer.</span></span>
+      </h2>
+
+      <div class="philosophy__columns">
+        <div class="philosophy__col">
+          <h3><span class="line-reveal"><span class="line-reveal__inner">Pre-LLM Security Gate</span></span></h3>
+          <p>
+            Pixel Error Level Analysis, hidden PDF span filtering, and regex prompt-injection
+            stripping execute deterministically before prompt construction. Untrusted inputs never reach the model.
+          </p>
+        </div>
+        <div class="philosophy__col">
+          <h3><span class="line-reveal"><span class="line-reveal__inner">LLM as Scribe, Never Judge</span></span></h3>
+          <p>
+            Python owns all trust math, conflict edges, and the hard 0.65 abstention gate.
+            Local Ollama acts strictly as a prose scribe constrained to verified evidence dossiers.
+          </p>
+        </div>
+        <div class="philosophy__col">
+          <h3><span class="line-reveal"><span class="line-reveal__inner">SHA-256 Chain of Custody</span></span></h3>
+          <p>
+            Every source document carries a deterministic SHA-256 identifier, and every output ships
+            with exact page, row, or bounding-box coordinates inside an inspectable JSON audit dossier.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================
+         WHY STANDARD RAG FAILS (4 Problem Cards)
+         ======================================== -->
+    <section class="section container" id="problem">
+      <div class="section-header">
+        <p class="section-label"><span class="line-reveal"><span class="line-reveal__inner">Adversarial Threat Model</span></span></p>
+        <h2 class="section-title">
+          <span class="line-reveal"><span class="line-reveal__inner">Why standard RAG</span></span>
+          <span class="line-reveal"><span class="line-reveal__inner">fails on evidence</span></span>
+        </h2>
+      </div>
+
+      <div class="problems__grid">
+        <article class="problem-card">
+          <div class="problem-card__top">
+            <span class="problem-card__number">01</span>
+            <span class="problem-card__tag">ELA Threshold 25.0</span>
+          </div>
+          <h3 class="problem-card__title">Forged or Spliced Scans</h3>
+          <p class="problem-card__text">
+            Standard OCR reads manipulated numbers without checking pixel integrity.
+            JPEG Error Level Analysis (<span class="inline-spec">32x32 block ELA</span>,
+            threshold <span class="inline-spec">25.0</span>) catches altered totals such as
+            <span class="inline-spec">$18,000</span> spliced onto a <span class="inline-spec">$12,000</span> receipt.
+          </p>
+        </article>
+
+        <article class="problem-card">
+          <div class="problem-card__top">
+            <span class="problem-card__number">02</span>
+            <span class="problem-card__tag">Pre-LLM Sanitization</span>
+          </div>
+          <h3 class="problem-card__title">Hidden PDF Injections</h3>
+          <p class="problem-card__text">
+            White-on-white text (<span class="inline-spec">rgb(255,255,255)</span>) and instruction
+            overrides hijack downstream LLM outputs. PyMuPDF strips hidden spans and off-page override
+            text before the LLM ever sees it.
+          </p>
+        </article>
+
+        <article class="problem-card">
+          <div class="problem-card__top">
+            <span class="problem-card__number">03</span>
+            <span class="problem-card__tag">Temporal Graph</span>
+          </div>
+          <h3 class="problem-card__title">Temporal Amendments</h3>
+          <p class="problem-card__text">
+            Legal addenda updating amounts over time look like conflicting facts to flat chunk retrieval.
+            <span class="inline-spec">SUPERSEDES</span> edges separate valid legal updates
+            (<span class="inline-spec">$4,500</span> to <span class="inline-spec">$5,200</span>) from true contradictions.
+          </p>
+        </article>
+
+        <article class="problem-card">
+          <div class="problem-card__top">
+            <span class="problem-card__number">04</span>
+            <span class="problem-card__tag">Abstention Gate</span>
+          </div>
+          <h3 class="problem-card__title">Illegible and Blank Fields</h3>
+          <p class="problem-card__text">
+            Vector RAG hallucinates answers when scans are blurry or ledger cells are blank.
+            Laplacian blur checks (<span class="inline-spec">&lt; 80.0</span>) and
+            <span class="inline-spec">[MISSING]</span> table flags trigger deterministic abstention instead of hallucination.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ========================================
+         ASYMMETRICAL SHOWCASE GRID (12 Columns)
+         ======================================== -->
+    <section class="section container" id="showcase">
+      <div class="section-header">
+        <p class="section-label"><span class="line-reveal"><span class="line-reveal__inner">System Architecture</span></span></p>
+        <h2 class="section-title">
+          <span class="line-reveal"><span class="line-reveal__inner">Inside the evidence</span></span>
+          <span class="line-reveal"><span class="line-reveal__inner">verification graph</span></span>
+        </h2>
+      </div>
+
+      <div class="showcase__grid">
+        <!-- 1. 8-Column Wide Rectangular Plate -->
+        <div class="showcase-item showcase-item--wide">
+          <div class="showcase-item__frame">
+            <div class="showcase-item__clip">
+              <div class="showcase-item__parallax">
+                <svg class="showcase-item__img" viewBox="0 0 840 520" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Evidence graph topology diagram for INV-402 and INV-510">
+                  <rect width="840" height="520" fill="#fafafa"/>
+                  <!-- Architectural Hairline Grid -->
+                  <g stroke="#111111" stroke-opacity="0.05" stroke-width="1">
+                    <line x1="140" y1="0" x2="140" y2="520"/>
+                    <line x1="280" y1="0" x2="280" y2="520"/>
+                    <line x1="420" y1="0" x2="420" y2="520"/>
+                    <line x1="560" y1="0" x2="560" y2="520"/>
+                    <line x1="700" y1="0" x2="700" y2="520"/>
+                    <line x1="0" y1="130" x2="840" y2="130"/>
+                    <line x1="0" y1="260" x2="840" y2="260"/>
+                    <line x1="0" y1="390" x2="840" y2="390"/>
+                  </g>
+                  <!-- Graph Edges -->
+                  <line x1="210" y1="240" x2="280" y2="365" stroke="#111111" stroke-width="1.2"/>
+                  <line x1="420" y1="240" x2="280" y2="365" stroke="#111111" stroke-width="1.2"/>
+                  <line x1="650" y1="240" x2="590" y2="365" stroke="#838282" stroke-width="1" stroke-dasharray="5,4"/>
+                  <line x1="280" y1="365" x2="420" y2="140" stroke="#b6b5b5" stroke-width="1"/>
+                  <line x1="590" y1="365" x2="420" y2="140" stroke="#b6b5b5" stroke-width="1" stroke-dasharray="4,4"/>
+                  <line x1="316" y1="365" x2="554" y2="365" stroke="#111111" stroke-width="1.2" stroke-dasharray="6,3"/>
+                  <!-- Contradicts Badge -->
+                  <rect x="380" y="353" width="110" height="24" fill="#1e1e1e"/>
+                  <text x="435" y="369" text-anchor="middle" fill="#f6f6f6" font-family="Satoshi, sans-serif" font-size="9" font-weight="700" letter-spacing="1.6">CONTRADICTS</text>
+                  <!-- Entity Diamond (safe margin from top edge under scrub parallax) -->
+                  <polygon points="420,92 474,136 420,180 366,136" fill="#1e1e1e"/>
+                  <text x="420" y="140" text-anchor="middle" fill="#f6f6f6" font-family="Clash Display, sans-serif" font-size="13" font-weight="700" letter-spacing="-0.4">ENT_INV_402</text>
+                  <!-- Clean Sources -->
+                  <rect x="135" y="198" width="150" height="54" fill="#ffffff" stroke="#111111" stroke-width="1.2"/>
+                  <text x="210" y="222" text-anchor="middle" fill="#111111" font-family="Satoshi, sans-serif" font-size="12" font-weight="700">ledger.csv</text>
+                  <text x="210" y="239" text-anchor="middle" fill="#838282" font-family="Satoshi, sans-serif" font-size="10">TRUST PRIOR 0.75</text>
+
+                  <rect x="345" y="198" width="150" height="54" fill="#ffffff" stroke="#111111" stroke-width="1.2"/>
+                  <text x="420" y="222" text-anchor="middle" fill="#111111" font-family="Satoshi, sans-serif" font-size="12" font-weight="700">approval_email.pdf</text>
+                  <text x="420" y="239" text-anchor="middle" fill="#838282" font-family="Satoshi, sans-serif" font-size="10">CORROBORATED · P1</text>
+
+                  <!-- Quarantined Source -->
+                  <rect x="565" y="198" width="170" height="54" fill="#f2f2f2" stroke="#111111" stroke-width="1" stroke-dasharray="4,3"/>
+                  <text x="650" y="222" text-anchor="middle" fill="#111111" font-family="Satoshi, sans-serif" font-size="11" font-weight="700">receipt_tampered.jpg</text>
+                  <text x="650" y="239" text-anchor="middle" fill="#838282" font-family="Satoshi, sans-serif" font-size="9" letter-spacing="1.2">QUARANTINED · ELA FLAG</text>
+
+                  <!-- Claim Nodes -->
+                  <circle cx="280" cy="365" r="36" fill="#111111"/>
+                  <text x="280" y="362" text-anchor="middle" fill="#f6f6f6" font-family="Clash Display, sans-serif" font-size="13" font-weight="700">$12,000</text>
+                  <text x="280" y="378" text-anchor="middle" fill="#b6b5b5" font-family="Satoshi, sans-serif" font-size="8" font-weight="700" letter-spacing="1.2">94% TRUST</text>
+
+                  <circle cx="590" cy="365" r="36" fill="#f2f2f2" stroke="#838282" stroke-width="1" stroke-dasharray="4,3"/>
+                  <text x="590" y="362" text-anchor="middle" fill="#838282" font-family="Clash Display, sans-serif" font-size="13" font-weight="700">$18,000</text>
+                  <text x="590" y="378" text-anchor="middle" fill="#838282" font-family="Satoshi, sans-serif" font-size="8" font-weight="700" letter-spacing="1.2">15% CAP</text>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="showcase-item__caption">
+            <span class="showcase-item__title">Cross-Modal Corroboration vs. ELA Tamper Isolation</span>
+            <span class="showcase-item__meta">TC-01 · CONFLICT_RESOLVED</span>
+          </div>
+        </div>
+
+        <!-- 2. 4-Column Pill-Shaped Vertical Showcase (500px tall) -->
+        <div class="showcase-item showcase-item--pill">
+          <div class="showcase-item__frame">
+            <div class="showcase-item__clip">
+              <div class="showcase-item__parallax">
+                <svg class="showcase-item__img" viewBox="0 0 340 540" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Iterative trust propagation across 5 rounds">
+                  <rect width="340" height="540" fill="#1e1e1e"/>
+                  <text x="170" y="96" text-anchor="middle" fill="#f6f6f6" fill-opacity="0.45" font-family="Satoshi, sans-serif" font-size="10" font-weight="700" letter-spacing="2.4">PROPAGATION</text>
+                  <!-- Threshold hairline at 65% -->
+                  <line x1="201" y1="122" x2="201" y2="444" stroke="#f6f6f6" stroke-opacity="0.35" stroke-width="1" stroke-dasharray="3,3"/>
+                  <text x="206" y="454" fill="#f6f6f6" fill-opacity="0.6" font-family="Satoshi, sans-serif" font-size="9" font-weight="700" letter-spacing="1">0.65 GATE</text>
+
+                  <!-- 5 Iterations -->
+                  <g font-family="Satoshi, sans-serif" font-size="10" fill="#f6f6f6">
+                    <text x="48" y="142" fill-opacity="0.5">ITER 01</text>
+                    <text x="292" y="142" text-anchor="end" fill-opacity="0.7">0.48</text>
+                    <rect x="48" y="152" width="244" height="2" fill="#f6f6f6" fill-opacity="0.12"/>
+                    <rect x="48" y="152" width="117" height="2" fill="#f6f6f6"/>
+
+                    <text x="48" y="198" fill-opacity="0.5">ITER 02</text>
+                    <text x="292" y="198" text-anchor="end" fill-opacity="0.7">0.63</text>
+                    <rect x="48" y="208" width="244" height="2" fill="#f6f6f6" fill-opacity="0.12"/>
+                    <rect x="48" y="208" width="154" height="2" fill="#f6f6f6"/>
+
+                    <text x="48" y="254" fill-opacity="0.5">ITER 03</text>
+                    <text x="292" y="254" text-anchor="end" fill-opacity="0.7">0.78</text>
+                    <rect x="48" y="264" width="244" height="2" fill="#f6f6f6" fill-opacity="0.12"/>
+                    <rect x="48" y="264" width="190" height="2" fill="#f6f6f6"/>
+
+                    <text x="48" y="310" fill-opacity="0.5">ITER 04</text>
+                    <text x="292" y="310" text-anchor="end" fill-opacity="0.7">0.89</text>
+                    <rect x="48" y="320" width="244" height="2" fill="#f6f6f6" fill-opacity="0.12"/>
+                    <rect x="48" y="320" width="217" height="2" fill="#f6f6f6"/>
+
+                    <text x="48" y="366" fill-opacity="0.8">ITER 05</text>
+                    <text x="292" y="366" text-anchor="end">0.94</text>
+                    <rect x="48" y="376" width="244" height="3" fill="#f6f6f6" fill-opacity="0.12"/>
+                    <rect x="48" y="376" width="229" height="3" fill="#f6f6f6"/>
+                  </g>
+
+                  <!-- Quarantined Cap -->
+                  <text x="48" y="422" fill="#f6f6f6" fill-opacity="0.4" font-family="Satoshi, sans-serif" font-size="9" font-weight="700" letter-spacing="1.2">QUARANTINED CAP</text>
+                  <text x="292" y="422" text-anchor="end" fill="#f6f6f6" fill-opacity="0.4" font-family="Satoshi, sans-serif" font-size="9">0.15</text>
+                  <rect x="48" y="432" width="244" height="1" fill="#f6f6f6" fill-opacity="0.1"/>
+                  <rect x="48" y="432" width="36" height="1" fill="#f6f6f6" fill-opacity="0.5"/>
+                </svg>
+              </div>
+            </div>
+            <div class="showcase-pill-overlay">
+              <div class="showcase-pill-overlay__circle">
+                <span class="showcase-pill-overlay__text">5 Iterations</span>
+                <span class="showcase-pill-overlay__sub">0.15 Tamper Cap</span>
+              </div>
+            </div>
+          </div>
+          <div class="showcase-item__caption">
+            <span class="showcase-item__title">Iterative Trust Convergence</span>
+            <span class="showcase-item__meta">5 Rounds</span>
+          </div>
+        </div>
+
+        <!-- 3. 5-Column Circular Aspect-Square Plate -->
+        <div class="showcase-item showcase-item--circle">
+          <div class="showcase-item__frame">
+            <div class="showcase-item__clip">
+              <div class="showcase-item__parallax">
+                <svg class="showcase-item__img" viewBox="0 0 440 440" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="65 percent deterministic abstention dial">
+                  <rect width="440" height="440" fill="#fafafa"/>
+                  <circle cx="220" cy="220" r="158" fill="none" stroke="#111111" stroke-opacity="0.1" stroke-width="1"/>
+                  <circle cx="220" cy="220" r="118" fill="none" stroke="#111111" stroke-opacity="0.18" stroke-width="1" stroke-dasharray="4,4"/>
+                  <!-- Compass ticks -->
+                  <line x1="220" y1="62" x2="220" y2="78" stroke="#111111" stroke-width="1.2"/>
+                  <line x1="220" y1="362" x2="220" y2="378" stroke="#111111" stroke-width="1.2"/>
+                  <line x1="62" y1="220" x2="78" y2="220" stroke="#111111" stroke-width="1.2"/>
+                  <line x1="362" y1="220" x2="378" y2="220" stroke="#111111" stroke-width="1.2"/>
+
+                  <text x="220" y="206" text-anchor="middle" fill="#111111" font-family="Clash Display, sans-serif" font-size="78" font-weight="700" letter-spacing="-4">65%</text>
+                  <text x="220" y="236" text-anchor="middle" fill="#838282" font-family="Satoshi, sans-serif" font-size="10" font-weight="700" letter-spacing="2.4">ABSTENTION THRESHOLD</text>
+
+                  <text x="220" y="280" text-anchor="middle" fill="#111111" font-family="Satoshi, sans-serif" font-size="9" font-weight="700" letter-spacing="1.4">VERIFIED &middot; CONFLICT_RESOLVED</text>
+                  <text x="220" y="298" text-anchor="middle" fill="#838282" font-family="Satoshi, sans-serif" font-size="9" font-weight="500" letter-spacing="1.4">TAMPER_DETECTED &middot; INSUFFICIENT</text>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="showcase-item__caption">
+            <span class="showcase-item__title">Deterministic Abstention Boundary</span>
+            <span class="showcase-item__meta">core/reasoner.py</span>
+          </div>
+        </div>
+
+        <!-- 4. 7-Column Wide Rectangular Plate -->
+        <div class="showcase-item showcase-item--rect">
+          <div class="showcase-item__frame">
+            <div class="showcase-item__clip">
+              <div class="showcase-item__parallax">
+                <svg class="showcase-item__img" viewBox="0 0 740 460" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Temporal amendment graph flow separating legal updates from conflicts">
+                  <rect width="740" height="460" fill="#fafafa"/>
+                  <!-- Hairline grid -->
+                  <g stroke="#111111" stroke-opacity="0.05" stroke-width="1">
+                    <line x1="185" y1="0" x2="185" y2="460"/>
+                    <line x1="370" y1="0" x2="370" y2="460"/>
+                    <line x1="555" y1="0" x2="555" y2="460"/>
+                    <line x1="0" y1="230" x2="740" y2="230"/>
+                  </g>
+
+                  <!-- Top timeline axis -->
+                  <line x1="72" y1="120" x2="668" y2="120" stroke="#111111" stroke-opacity="0.2" stroke-width="1"/>
+                  <text x="72" y="102" fill="#838282" font-family="Satoshi, sans-serif" font-size="10" font-weight="700" letter-spacing="1.8">2026-03-15 · PRIOR RECORD</text>
+                  <text x="438" y="102" fill="#111111" font-family="Satoshi, sans-serif" font-size="10" font-weight="700" letter-spacing="1.8">2026-04-02 · AMENDMENT</text>
+
+                  <!-- Prior Claim Box -->
+                  <rect x="72" y="156" width="230" height="128" fill="#f2f2f2" stroke="#b6b5b5" stroke-width="1"/>
+                  <text x="96" y="190" fill="#838282" font-family="Satoshi, sans-serif" font-size="10" font-weight="700" letter-spacing="1.6">APPROVAL_EMAIL.PDF</text>
+                  <text x="96" y="232" fill="#838282" font-family="Clash Display, sans-serif" font-size="36" font-weight="700" letter-spacing="-1.5">$4,500</text>
+                  <text x="96" y="262" fill="#838282" font-family="Satoshi, sans-serif" font-size="11">Status: Superseded</text>
+
+                  <!-- Arrow: SUPERSEDES -->
+                  <path d="M 302 220 L 434 220" stroke="#111111" stroke-width="1.5"/>
+                  <polygon points="434,215 444,220 434,225" fill="#111111"/>
+                  <rect x="318" y="186" width="108" height="22" fill="#1e1e1e"/>
+                  <text x="372" y="201" text-anchor="middle" fill="#f6f6f6" font-family="Satoshi, sans-serif" font-size="9" font-weight="700" letter-spacing="1.5">SUPERSEDES</text>
+
+                  <!-- New Amendment Box -->
+                  <rect x="444" y="156" width="224" height="128" fill="#ffffff" stroke="#111111" stroke-width="1.5"/>
+                  <text x="468" y="190" fill="#111111" font-family="Satoshi, sans-serif" font-size="10" font-weight="700" letter-spacing="1.6">AMENDMENT_MEMO.PDF</text>
+                  <text x="468" y="232" fill="#111111" font-family="Clash Display, sans-serif" font-size="36" font-weight="700" letter-spacing="-1.5">$5,200</text>
+                  <text x="468" y="262" fill="#111111" font-family="Satoshi, sans-serif" font-size="11" font-weight="500">VERIFIED · 71% CONFIDENCE</text>
+
+                  <!-- Footer note inside plate -->
+                  <text x="72" y="348" fill="#838282" font-family="Satoshi, sans-serif" font-size="12" font-weight="300">
+                    Temporal resolution prevents valid legal amendments from triggering false contradiction penalties.
+                  </text>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="showcase-item__caption">
+            <span class="showcase-item__title">Temporal Amendment Resolution (INV-510)</span>
+            <span class="showcase-item__meta">TC-02 · SUPERSEDES EDGE</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================
+         4-STAGE PIPELINE ARCHITECTURE
+         ======================================== -->
+    <section class="section container" id="pipeline">
+      <div class="section-header">
+        <p class="section-label"><span class="line-reveal"><span class="line-reveal__inner">Deterministic Flow</span></span></p>
+        <h2 class="section-title">
+          <span class="line-reveal"><span class="line-reveal__inner">Four stages,</span></span>
+          <span class="line-reveal"><span class="line-reveal__inner">one hard gate</span></span>
+        </h2>
+      </div>
+
+      <div class="pipeline__stages">
+        <article class="stage-card">
+          <div class="stage-card__number">01</div>
+          <h3 class="stage-card__title">Pre-LLM Forensics &amp; Ingestion</h3>
+          <p class="stage-card__text">
+            Computes SHA-256 document IDs and runs JPEG ELA, Laplacian blur checks, hidden PDF span
+            filtering, EXIF inspection, and prompt-injection stripping before text enters any prompt.
+          </p>
+          <div class="stage-card__tags">
+            <span class="stage-tag">SHA-256</span>
+            <span class="stage-tag">ELA</span>
+            <span class="stage-tag">RapidOCR</span>
+            <span class="stage-tag">PyMuPDF</span>
+            <span class="stage-tag">DuckDB</span>
+          </div>
+        </article>
+
+        <article class="stage-card">
+          <div class="stage-card__number">02</div>
+          <h3 class="stage-card__title">Atomic Claims &amp; Entity Resolution</h3>
+          <p class="stage-card__text">
+            Rejects unsanitized chunks. Extracts Pydantic v2 provenance-bound claims via schema-constrained
+            qwen2.5:3b or deterministic fallback, resolving entities with RapidFuzz and BAAI/bge-m3.
+          </p>
+          <div class="stage-card__tags">
+            <span class="stage-tag">Pydantic v2</span>
+            <span class="stage-tag">qwen2.5:3b</span>
+            <span class="stage-tag">RapidFuzz</span>
+            <span class="stage-tag">bge-m3</span>
+          </div>
+        </article>
+
+        <article class="stage-card">
+          <div class="stage-card__number">03</div>
+          <h3 class="stage-card__title">Evidence Graph &amp; Trust Propagation</h3>
+          <p class="stage-card__text">
+            Builds a NetworkX MultiDiGraph linking Source, Claim, and Entity nodes with ASSERTS, ABOUT,
+            SUPPORTS, CONTRADICTS, and SUPERSEDES edges across 5 iterative trust propagation passes.
+          </p>
+          <div class="stage-card__tags">
+            <span class="stage-tag">NetworkX</span>
+            <span class="stage-tag">MultiDiGraph</span>
+            <span class="stage-tag">5 Passes</span>
+          </div>
+        </article>
+
+        <article class="stage-card">
+          <div class="stage-card__number">04</div>
+          <h3 class="stage-card__title">Bounded BFS &amp; Abstention Gate</h3>
+          <p class="stage-card__text">
+            Runs 2-hop bounded BFS retrieval plus local ChromaDB hints, then enforces Python's hard
+            0.65 abstention gate across VERIFIED, CONFLICT_RESOLVED, TAMPER_DETECTED, and INSUFFICIENT_EVIDENCE.
+          </p>
+          <div class="stage-card__tags">
+            <span class="stage-tag">2-Hop BFS</span>
+            <span class="stage-tag">ChromaDB</span>
+            <span class="stage-tag">&ge; 0.65 Gate</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ========================================
+         VERIFIED BENCHMARKS
+         ======================================== -->
+    <section class="section container" id="benchmarks">
+      <div class="section-header">
+        <p class="section-label"><span class="line-reveal"><span class="line-reveal__inner">Live Evaluation</span></span></p>
+        <h2 class="section-title">
+          <span class="line-reveal"><span class="line-reveal__inner">Verified against</span></span>
+          <span class="line-reveal"><span class="line-reveal__inner">eval/test_cases.json</span></span>
+        </h2>
+      </div>
+
+      <div class="benchmarks__metrics">
+        <div class="metric-card">
+          <div class="metric-card__value">42/42</div>
+          <div class="metric-card__label">Pytest Passing</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-card__value">5/5</div>
+          <div class="metric-card__label">Adversarial Eval</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-card__value">100%</div>
+          <div class="metric-card__label">Injection Block</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-card__value">100%</div>
+          <div class="metric-card__label">Conflict Recall</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-card__value">100%</div>
+          <div class="metric-card__label">Abstention Accuracy</div>
+        </div>
+      </div>
+
+      <div class="tc-list">
+        <div class="tc-item">
+          <span class="tc-item__id">TC-01</span>
+          <div class="tc-item__name">
+            Cross-modal conflict, tamper &amp; prompt injection (INV-402)
+            <span class="tc-item__detail">Verifies $12,000 via ledger.csv + approval_email.pdf; quarantines spliced $18,000 JPEG &amp; injected PDF</span>
+          </div>
+          <span class="tc-item__status tc-item__status--outline">Conflict Resolved</span>
+          <span class="tc-item__score">94%</span>
+        </div>
+
+        <div class="tc-item">
+          <span class="tc-item__id">TC-02</span>
+          <div class="tc-item__name">
+            Temporal amendment resolution (INV-510)
+            <span class="tc-item__detail">amendment_memo.pdf ($5,200 on 2026-04-02) cleanly SUPERSEDES $4,500 prior records</span>
+          </div>
+          <span class="tc-item__status tc-item__status--solid">Verified</span>
+          <span class="tc-item__score">71%</span>
+        </div>
+
+        <div class="tc-item">
+          <span class="tc-item__id">TC-03</span>
+          <div class="tc-item__name">
+            Unanswerable / illegible proof (WIRE-Q4 approver)
+            <span class="tc-item__detail">Blank ledger approver + blurry PNG scan (below 65% threshold) triggers deterministic abstention</span>
+          </div>
+          <span class="tc-item__status tc-item__status--muted">Insufficient</span>
+          <span class="tc-item__score">0%</span>
+        </div>
+
+        <div class="tc-item">
+          <span class="tc-item__id">TC-04</span>
+          <div class="tc-item__name">
+            Clean corroborated lookup (INV-402 vendor)
+            <span class="tc-item__detail">Multi-modal agreement of Apex Logistics across structured table ledger and PDF approval</span>
+          </div>
+          <span class="tc-item__status tc-item__status--solid">Verified</span>
+          <span class="tc-item__score">94%</span>
+        </div>
+
+        <div class="tc-item">
+          <span class="tc-item__id">TC-05</span>
+          <div class="tc-item__name">
+            Prompt injection resistance (INV-402 vendor notes)
+            <span class="tc-item__detail">Blocks vendor_note_injected.pdf pre-LLM with zero $18,000 or override leakage</span>
+          </div>
+          <span class="tc-item__status tc-item__status--outline">Tamper Detected</span>
+          <span class="tc-item__score">0%</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================
+         BESPOKE SERVICE CARDS
+         ======================================== -->
+    <section class="section container" id="services">
+      <div class="section-header">
+        <p class="section-label"><span class="line-reveal"><span class="line-reveal__inner">Core Capabilities</span></span></p>
+        <h2 class="section-title">
+          <span class="line-reveal"><span class="line-reveal__inner">Designed for zero</span></span>
+          <span class="line-reveal"><span class="line-reveal__inner">unverified answers</span></span>
+        </h2>
+      </div>
+
+      <div class="services__grid">
+        <article class="service-card">
+          <div class="service-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <h3 class="service-card__title">Pre-LLM Document Forensics</h3>
+          <p class="service-card__text">
+            Scans JPEG pixels via 32x32 Error Level Analysis, flags hidden white-on-white PDF layers,
+            strips injection instructions, and measures Laplacian sharpness before any model call.
+          </p>
+          <a href="#problem" class="service-card__cta">
+            Inspect Threat Model
+            <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </article>
+
+        <article class="service-card">
+          <div class="service-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <rect x="3" y="3" width="6" height="6" rx="1"/>
+              <rect x="15" y="3" width="6" height="6" rx="1"/>
+              <rect x="9" y="15" width="6" height="6" rx="1"/>
+              <path d="M6 9v3a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V9"/>
+              <line x1="12" y1="14" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <h3 class="service-card__title">Conflict-Aware Evidence Graphs</h3>
+          <p class="service-card__text">
+            Constructs a typed NetworkX MultiDiGraph that distinguishes temporal amendments
+            (SUPERSEDES) from true contradictions (CONTRADICTS) with iterative trust convergence.
+          </p>
+          <a href="#showcase" class="service-card__cta">
+            View Graph Topology
+            <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </article>
+
+        <article class="service-card">
+          <div class="service-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </div>
+          <h3 class="service-card__title">100% Air-Gapped Execution</h3>
+          <p class="service-card__text">
+            Every parser, OCR engine, embedding weight (BAAI/bge-m3), and local Ollama model runs on
+            localhost (127.0.0.1:11434) with zero cloud telemetry or external data egress.
+          </p>
+          <a href="audit.html" class="service-card__cta" data-page-link="true">
+            Launch Local Console
+            <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================
+       FOOTER (#1e1e1e, 4 Columns, Lucide Icons)
+       ======================================== -->
+  <footer class="footer" id="contact">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <div class="footer__brand-name">CERBERUS-X</div>
+          <p class="footer__brand-desc">
+            100% offline multimodal forensic intelligence and conflict-aware evidence graph engine.
+            Every model, embedding, and parser runs on this machine. No evidence leaves localhost.
+          </p>
+        </div>
+
+        <div>
+          <div class="footer__col-title">Navigation</div>
+          <ul class="footer__links">
+            <li><a href="#problem" class="footer__link">Problem</a></li>
+            <li><a href="#philosophy" class="footer__link">Philosophy</a></li>
+            <li><a href="#showcase" class="footer__link">Architecture</a></li>
+            <li><a href="#pipeline" class="footer__link">Pipeline</a></li>
+            <li><a href="#benchmarks" class="footer__link">Benchmarks</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer__col-title">Company</div>
+          <ul class="footer__links">
+            <li>
+              <a href="https://github.com/Gagan-G-044/QUBITRA" class="footer__link" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+                Repository
+              </a>
+            </li>
+            <li>
+              <a href="audit.html" class="footer__link" data-page-link="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                Local Audit Console
+              </a>
+            </li>
+            <li>
+              <a href="#pipeline" class="footer__link">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Audit Schema
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer__col-title">Contact</div>
+          <ul class="footer__links">
+            <li>
+              <a href="audit.html" class="footer__link" data-page-link="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                Console /audit.html
+              </a>
+            </li>
+            <li>
+              <span class="footer__link">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                Ollama 127.0.0.1:11434
+              </span>
+            </li>
+            <li>
+              <span class="footer__link">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                HF_HUB_OFFLINE=1
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <span class="footer__copy">CERBERUS-X &middot; Offline Forensic Intelligence Engine</span>
+        <div class="footer__tech-chips">
+          <span class="footer__chip">Python</span>
+          <span class="footer__chip">Pydantic v2</span>
+          <span class="footer__chip">NetworkX</span>
+          <span class="footer__chip">PyMuPDF</span>
+          <span class="footer__chip">RapidOCR</span>
+          <span class="footer__chip">DuckDB</span>
+          <span class="footer__chip">Ollama qwen2.5:3b</span>
+          <span class="footer__chip">PyVis</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Smooth Same-Tab Page Curtain Overlay -->
+  <div class="page-curtain" id="pageCurtain" aria-hidden="true"></div>
+</body>
+</html>

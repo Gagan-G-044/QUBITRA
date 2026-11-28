@@ -11,7 +11,6 @@ import cli
 from core.config import settings
 from core.graph_engine import (
     EvidenceGraphEngine,
-    build_and_persist_graph,
     detect_claim_relations,
     get_entity_subgraph,
     load_graph_artifacts,

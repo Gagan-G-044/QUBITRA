@@ -16,7 +16,6 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
-from typing import Any
 
 from pydantic import BaseModel, Field, TypeAdapter
 from rapidfuzz import fuzz
